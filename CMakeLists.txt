@@ -16,7 +16,14 @@ endif()
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_executable(card_recognition main.cpp)
+add_executable(card_recognition main.cpp
+        src/SIFTDetector.cpp
+        src/SIFTDetector.h
+        src/HarrisCornerDetector.cpp
+        src/HarrisCornerDetector.h
+        src/CardRecognizer.cpp
+        src/CardRecognizer.h
+)
 
 target_link_libraries(card_recognition PRIVATE ${OpenCV_LIBS})
 
