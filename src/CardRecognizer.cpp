@@ -12,9 +12,9 @@ CardRecognizer::CardRecognizer(float harrisK, double harrisThreshold, int harris
     : harrisDetector(harrisK, harrisThreshold, harrisBlockSize, harrisSigma),
       siftDetector(siftFeatures, siftOctaveLayers, siftContrastThreshold, siftEdgeThreshold, siftSigma)
 {
-    loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set1)");
-    loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set2)");
-    loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set3)");
+    // loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set1)");
+    // loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set2)");
+    // loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set3)");
     loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set4)");
 }
 
@@ -68,7 +68,6 @@ cv::Mat CardRecognizer::recognize(const cv::Mat &inputImage) const
             int bestMatchesCount = 0;
 
             for(size_t i = 0; i < templateDescriptors.size(); i++){
-                printf("> Processing %s\n", templateNames[i].c_str());
                 cv::BFMatcher matcher(cv::NORM_L2);
                 std::vector<cv::DMatch> matches;
 
@@ -90,9 +89,9 @@ cv::Mat CardRecognizer::recognize(const cv::Mat &inputImage) const
                 }
             }
 
-            cv::Point textPosition(approx[0].x, approx[0].y + 20);
-            cv::putText(processed, bestMatchName, textPosition, cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255,0,0), 1);
-            printf("Found card is %s", bestMatchName.c_str());
+            cv::Point textPosition(approx[0].x + 5, approx[0].y + 40);
+            cv::putText(processed, bestMatchName, textPosition, cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255,0,0), 4);
+            printf("Found card is %s\n", bestMatchName.c_str());
         }
     }
 
