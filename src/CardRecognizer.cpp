@@ -14,14 +14,10 @@ CardRecognizer::CardRecognizer(float harrisK, double harrisThreshold,
     : harrisDetector(harrisK, harrisThreshold, harrisBlockSize, harrisSigma),
       siftDetector(siftFeatures, siftOctaveLayers, siftContrastThreshold,
                    siftEdgeThreshold, siftSigma) {
-  // loadTemplatesFromFolder(R"(D:\2.
-  // Area\facultate\card-recognision\cards_photos\set1)");
-  // loadTemplatesFromFolder(R"(D:\2.
-  // Area\facultate\card-recognision\cards_photos\set2)");
-  // loadTemplatesFromFolder(R"(D:\2.
-  // Area\facultate\card-recognision\cards_photos\set3)");
-  loadTemplatesFromFolder("/Users/grig/Documents/2.Areas/college/"
-                          "card-recognision/cards_photos/set4");
+  loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set1)");
+  loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set2)");
+  loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set3)");
+  loadTemplatesFromFolder("D:\\2. Area\\facultate\\card-recognision\\cards_photos\\set4");
 }
 
 void CardRecognizer::loadTemplatesFromFolder(const std::string &folderPath) {
@@ -44,26 +40,17 @@ void CardRecognizer::loadTemplatesFromFolder(const std::string &folderPath) {
   }
 }
 
-cv::Mat CardRecognizer::recognize(const cv::Mat &inputImage) const {
-  cv::Mat processed = inputImage.clone();
+std::string CardRecognizer::recognize(const cv::Mat &inputImage) const {
   cv::Mat harrisResponse = harrisDetector.detect(inputImage);
   cv::Mat grayResponse;
   cv::cvtColor(harrisResponse, grayResponse, cv::COLOR_BGR2GRAY);
 
   cv::Mat harrisThresh;
-  cv::threshold(grayResponse, harrisThresh, harrisDetector.getThreshold(), 255,
-                cv::THRESH_BINARY);
+  cv::threshold(grayResponse, harrisThresh, harrisDetector.getThreshold(), 255, cv::THRESH_BINARY);
   harrisThresh.convertTo(harrisThresh, CV_8U);
 
-  cv::imshow("Harris Tresh", harrisThresh);
-
   std::vector<std::vector<cv::Point>> contours;
-  cv::findContours(harrisThresh, contours, cv::RETR_EXTERNAL,
-                   cv::CHAIN_APPROX_SIMPLE);
-  cv::Mat contourVis;
-  cv::cvtColor(harrisThresh, contourVis, cv::COLOR_GRAY2BGR);
-  cv::drawContours(contourVis, contours, -1, cv::Scalar(0, 255, 0), 2);
-  cv::imshow("countours", contourVis);
+  cv::findContours(harrisThresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
   for (auto &contour : contours) {
     std::vector<cv::Point> approx;
@@ -71,7 +58,6 @@ cv::Mat CardRecognizer::recognize(const cv::Mat &inputImage) const {
     cv::approxPolyDP(contour, approx, 0.02 * peri, true);
 
     if (approx.size() == 4 && cv::contourArea(approx) > 1000) {
-      cv::polylines(processed, approx, true, cv::Scalar(0, 255, 0), 2);
       cv::Mat cardImage = fourPointTransform(inputImage, approx);
 
       std::vector<cv::KeyPoint> cardKeypoints;
@@ -102,15 +88,10 @@ cv::Mat CardRecognizer::recognize(const cv::Mat &inputImage) const {
           bestMatchName = templateNames[i];
         }
       }
-
-      cv::Point textPosition(approx[0].x + 5, approx[0].y + 40);
-      cv::putText(processed, bestMatchName, textPosition,
-                  cv::FONT_HERSHEY_SIMPLEX, 1.0, cv::Scalar(255, 0, 0), 4);
-      printf("Found card is %s\n", bestMatchName.c_str());
+      
+      return bestMatchName;
     }
   }
-
-  return processed;
 }
 
 cv::Mat

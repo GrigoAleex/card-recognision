@@ -4,6 +4,8 @@ project(card_recognition)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+option(BUILD_TESTING "Build with tests/accuracy.cpp instead of main.cpp" OFF)
+
 # Ensure build type is set
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
@@ -16,13 +18,23 @@ endif()
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
-add_executable(card_recognition main.cpp
-        src/SIFTDetector.cpp
-        src/SIFTDetector.h
-        src/HarrisCornerDetector.cpp
-        src/HarrisCornerDetector.h
-        src/CardRecognizer.cpp
-        src/CardRecognizer.h
+set(APP_SRCS 
+    src/SIFTDetector.cpp
+    src/HarrisCornerDetector.cpp
+    src/CardRecognizer.cpp
+)
+
+if(BUILD_TESTING)
+    message(STATUS ">>> Building TEST executable (using tests/accuracy.cpp)")
+    set(MAIN_SRC tests/accuracy.cpp)
+else()
+    message(STATUS ">>> Building normal executable (using main.cpp)")
+    set(MAIN_SRC main.cpp)
+endif()
+
+add_executable(card_recognition
+    ${APP_SRCS}
+    ${MAIN_SRC}
 )
 
 target_link_libraries(card_recognition PRIVATE ${OpenCV_LIBS})

@@ -31,7 +31,7 @@ public:
     );
 
     void loadTemplatesFromFolder(const std::string& folderPath);
-    cv::Mat recognize(const cv::Mat &inputImage) const;
+    std::string recognize(const cv::Mat &inputImage) const;
 
 private:
     static cv::Mat fourPointTransform(const cv::Mat &image, const std::vector<cv::Point> &points);

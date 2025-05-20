@@ -13,8 +13,8 @@ class HarrisCornerDetector {
     public:
         explicit HarrisCornerDetector(float k = 0.04f, double threshold = 100, int blockSize = 3, double sigma = 2.0);
 
-        [[nodiscard]] cv::Mat detect(const cv::Mat& inputImage) const;
-        [[nodiscard]] double getThreshold() const;
+        cv::Mat detect(const cv::Mat& inputImage) const;
+        double getThreshold() const;
 
     private:
         float k_;
