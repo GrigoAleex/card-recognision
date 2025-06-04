@@ -25,10 +25,12 @@ namespace grg {
         cv::Mat Iy2 = Iy.mul(Iy);
         cv::Mat Ixy = Ix.mul(Iy);
 
+        int safeBlockSize = std::max(3, blockSize_ | 1);  // forțează impar și ≥ 3
+
         cv::Mat Sx2, Sy2, Sxy;
-        cv::GaussianBlur(Ix2, Sx2, cv::Size(blockSize_, blockSize_), sigma_);
-        cv::GaussianBlur(Iy2, Sy2, cv::Size(blockSize_, blockSize_), sigma_);
-        cv::GaussianBlur(Ixy, Sxy, cv::Size(blockSize_, blockSize_), sigma_);
+        cv::GaussianBlur(Ix2, Sx2, cv::Size(safeBlockSize, safeBlockSize), sigma_);
+        cv::GaussianBlur(Iy2, Sy2, cv::Size(safeBlockSize, safeBlockSize), sigma_);
+        cv::GaussianBlur(Ixy, Sxy, cv::Size(safeBlockSize, safeBlockSize), sigma_);
 
         cv::Mat R = cv::Mat::zeros(gray.size(), CV_32F);
         for (int y = 0; y < gray.rows; y++) {

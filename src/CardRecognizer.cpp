@@ -14,9 +14,9 @@ CardRecognizer::CardRecognizer(float harrisK, double harrisThreshold,
     : harrisDetector(harrisK, harrisThreshold, harrisBlockSize, harrisSigma),
       siftDetector(siftFeatures, siftOctaveLayers, siftContrastThreshold,
                    siftEdgeThreshold, siftSigma) {
-  loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set1)");
-  loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set2)");
-  loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set3)");
+  /*loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set1)");*/
+  /*loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set2)");*/
+  /*loadTemplatesFromFolder(R"(D:\2. Area\facultate\card-recognision\cards_photos\set3)");*/
   loadTemplatesFromFolder("D:\\2. Area\\facultate\\card-recognision\\cards_photos\\set4");
 }
 
@@ -29,6 +29,7 @@ void CardRecognizer::loadTemplatesFromFolder(const std::string &folderPath) {
                   << std::endl;
         continue;
       }
+
       templates.push_back(templ);
       std::vector<cv::KeyPoint> kp;
       cv::Mat desc;
@@ -52,21 +53,21 @@ std::string CardRecognizer::recognize(const cv::Mat &inputImage) const {
   std::vector<std::vector<cv::Point>> contours;
   cv::findContours(harrisThresh, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
 
+  std::string bestMatchName = "Unknown";
+
   for (auto &contour : contours) {
     std::vector<cv::Point> approx;
     double peri = cv::arcLength(contour, true);
     cv::approxPolyDP(contour, approx, 0.02 * peri, true);
 
-    if (approx.size() == 4 && cv::contourArea(approx) > 1000) {
+    if (approx.size() == 4 && cv::contourArea(approx) > 500) {
       cv::Mat cardImage = fourPointTransform(inputImage, approx);
 
       std::vector<cv::KeyPoint> cardKeypoints;
       cv::Mat cardDescriptors;
       siftDetector.detectAndCompute(cardImage, cardKeypoints, cardDescriptors);
 
-      std::string bestMatchName = "Unknown";
       int bestMatchesCount = 0;
-
       for (size_t i = 0; i < templateDescriptors.size(); i++) {
         cv::BFMatcher matcher(cv::NORM_L2);
         std::vector<cv::DMatch> matches;
@@ -89,9 +90,9 @@ std::string CardRecognizer::recognize(const cv::Mat &inputImage) const {
         }
       }
       
-      return bestMatchName;
     }
   }
+  return bestMatchName;
 }
 
 cv::Mat

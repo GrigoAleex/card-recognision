@@ -10,7 +10,7 @@ int main() {
   std::cout << "Testing..." << std::endl;
 
   std::string input_folder = "D:\\2. Area\\facultate\\card-recognision\\cards_photos\\set4"; 
-  const grg::CardRecognizer recognizer(0.04f, 100.0, 3, 2.0, 0, 3, 0.04, 10, 1.6);
+  const grg::CardRecognizer recognizer(0.055f, 100.0, 3, 1.4, 0, 3, 0.04, 10, 1.6);
   std::vector<std::pair<std::string, std::string>> errors;
   size_t successCounter = 0;
   size_t sampleSize = 0;
@@ -39,7 +39,6 @@ int main() {
         errors.push_back(std::make_pair(filename, matchFound));
       }
     }
-
   }
 
   std::cout << std::endl;
@@ -48,9 +47,11 @@ int main() {
     std::cout << "+++ Actual: " << p.second << std::endl << std::endl;
   }
 
-  float accuracy = successCounter * 100 / sampleSize;
+  std::cout << "[DEBUG]: successCounter: " << successCounter << std::endl;
+  std::cout << "[DEBUG]: sampleSize: " << sampleSize << std::endl;
 
-  std::cout << "END! Final accuracy: " << accuracy << "%" << std::endl;
+  float accuracy = 1.0f * successCounter / sampleSize;
+  std::cout << "END! Final accuracy: " << accuracy * 100.0f << "%" << std::endl;
 
   return 0;
 }

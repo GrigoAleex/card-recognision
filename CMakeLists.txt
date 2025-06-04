@@ -26,7 +26,7 @@ set(APP_SRCS
 
 if(BUILD_TESTING)
     message(STATUS ">>> Building TEST executable (using tests/accuracy.cpp)")
-    set(MAIN_SRC tests/accuracy.cpp)
+    set(MAIN_SRC tests/hyperparam.cpp)
 else()
     message(STATUS ">>> Building normal executable (using main.cpp)")
     set(MAIN_SRC main.cpp)
